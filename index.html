@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>X-TEAM | @URIELGOD</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #00f2ff;
+            --spotify: #1DB954;
+            --accent: #bc00ff;
+            --bg-dark: #000000;
+            --card-bg: rgba(8, 8, 8, 0.5);
+        }
+
+        /* PROTECCIÓN ANTI-COPIA */
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Inter', sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        body { 
+            background-color: var(--bg-dark); 
+            color: white; 
+            height: 100vh; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+        }
+
+        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000; }
+
+        .container {
+            width: 88%; max-width: 380px; background: var(--card-bg); backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 35px 20px;
+            text-align: center; box-shadow: 0 0 50px rgba(0, 242, 255, 0.05); z-index: 10;
+        }
+
+        /* AVATAR */
+        .avatar-box { position: relative; width: 110px; height: 110px; margin: 0 auto 15px; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; z-index: 2; position: relative; animation: float 3s ease-in-out infinite; border: 2px solid var(--primary); }
+        .avatar-glow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); border-radius: 50%; filter: blur(25px); opacity: 0.4; animation: pulse 2s infinite; }
+
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.3; } 50% { transform: scale(1.1); opacity: 0.5; } 100% { transform: scale(0.9); opacity: 0.3; } }
+
+        /* TÍTULO Y BADGE */
+        .title-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .title { font-family: 'Orbitron'; font-size: 2.1rem; letter-spacing: -2px; }
+        .badge-verified { color: var(--primary); font-size: 1.2rem; filter: drop-shadow(0 0 5px var(--primary)); }
+
+        .tag { color: var(--primary); font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; display: block; margin-bottom: 20px; text-transform: uppercase; }
+
+        /* PLAYER */
+        .player-container {
+            background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 12px; margin-bottom: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .info-track { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+        .info-track i { color: var(--spotify); font-size: 1.6rem; cursor: pointer; }
+        .track-text { text-align: left; flex: 1; }
+        .track-text b { font-size: 0.8rem; }
+        .progress-area { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
+        .progress-bar { width: 0%; height: 100%; background: var(--spotify); border-radius: 10px; }
+
+        /* LINKS */
+        .links { display: flex; flex-direction: column; gap: 8px; }
+        .btn {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
+            padding: 14px; border-radius: 14px; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.85rem;
+            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .btn:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); transform: translateY(-2px); }
+        .btn-key { border-color: var(--accent); color: var(--accent); }
+
+        /* MODAL DEL AVISO LARGO */
+        .modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.95); display: none; align-items: center; 
+            justify-content: center; z-index: 1000; backdrop-filter: blur(10px); 
+        }
+        .modal-card { 
+            background: #0a0a0a; border: 1px solid var(--primary); 
+            padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; 
+            text-align: center;
+        }
+        .modal-card h3 { font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px; }
+        .modal-card p { font-size: 0.85rem; line-height: 1.7; color: #ccc; text-align: left; }
+        .close-btn { 
+            width: 100%; padding: 12px; background: var(--primary); 
+            border: none; border-radius: 10px; font-weight: 900; 
+            margin-top: 20px; cursor: pointer; color: black;
+        }
+
+        /* VIEWERS */
+        .views-count { margin-top: 20px; font-size: 0.65rem; color: #555; letter-spacing: 1px; font-weight: 700; }
+        .views-count i { color: var(--primary); margin-right: 5px; }
+
+        #toast { position: fixed; bottom: 30px; background: white; color: black; padding: 10px 25px; border-radius: 50px; font-weight: bold; display: none; z-index: 2000; border: 2px solid var(--primary); }
+    </style>
+</head>
+<body oncontextmenu="return false;" onclick="initAudio()">
+
+    <div id="particles-js"></div>
+    <div id="toast">¡COPIADO CON ÉXITO!</div>
+
+    <div class="modal" id="keyM">
+        <div class="modal-card">
+            <h3>ACCESS SYSTEM</h3>
+            <p>
+                1. Ejecuta el script en el juego.<br>
+                2. Haz click en el botón <b>"Get Key"</b>.<br>
+                3. Pega el enlace en tu navegador <b>Google</b>.<br>
+                4. Únete al grupo oficial de <b>Roblox</b>.<br>
+                5. Escribe el comando <b>/key</b> en el chat.<br>
+                6. ¡Listo! Ya tienes acceso total.
+            </p>
+            <button class="close-btn" onclick="toggleM(false)">ENTENDIDO</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="avatar-box">
+            <div class="avatar-glow"></div>
+            <img src="https://i.ibb.co/Z6dFbdH1/avatar-sin-fondo.png" alt="Avatar" class="avatar-img">
+        </div>
+
+        <div class="title-wrapper">
+            <h1 class="title">X-TEAM</h1>
+            <i class="fas fa-check-circle badge-verified"></i>
+        </div>
+        <span class="tag">@URIELGOD</span>
+
+        <div class="player-container">
+            <div class="info-track">
+                <i class="fas fa-play-circle" id="play-icon" onclick="togglePlay()"></i>
+                <div class="track-text"><b>El Tartas</b></div>
+                <i class="fab fa-spotify" style="color:var(--spotify)"></i>
+            </div>
+            <div class="progress-area"><div class="progress-bar" id="progress-bar"></div></div>
+        </div>
+
+        <div class="links">
+            <a href="javascript:void(0)" class="btn btn-key" onclick="toggleM(true)">
+                <i class="fas fa-key"></i> OBTENER KEY
+            </a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/GrowGarden/main/Script\'))()')">
+                <i class="fas fa-leaf"></i> GROW GARDEN
+            </a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/BrainRot/main/Script\'))()')">
+                <i class="fas fa-radiation"></i> BRAINROT HUB
+            </a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/MurderMystery/main/Script\'))()')">
+                <i class="fas fa-skull"></i> MURDER MYSTERY
+            </a>
+            <a href="https://www.tiktok.com/@teamnegro_01029" target="_blank" class="btn">
+                <i class="fab fa-tiktok"></i> TIKTOK OFICIAL
+            </a>
+        </div>
+
+        <div class="views-count">
+            <i class="fas fa-eye"></i> 14,582 VIEWS
+        </div>
+    </div>
+
+    <audio id="main-audio"></audio>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#ffffff" },
+                "opacity": { "value": 0.2 },
+                "size": { "value": 1.5 },
+                "move": { "enable": true, "speed": 0.8, "direction": "top-right" }
+            }
+        });
+
+        const audio = document.getElementById('main-audio');
+        const playBtn = document.getElementById('play-icon');
+        const progressBar = document.getElementById('progress-bar');
+        
+        function initAudio() { if(!audio.src) audio.src = "comando exclusivo el tartas(MP3_160K).mp3"; }
+        function togglePlay() {
+            if(audio.paused) { audio.play(); playBtn.className = "fas fa-pause-circle"; } 
+            else { audio.pause(); playBtn.className = "fas fa-play-circle"; }
+        }
+        audio.ontimeupdate = () => { progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`; };
+
+        // FUNCIONES DE INTERFAZ
+        function toggleM(s) { document.getElementById('keyM').style.display = s ? 'flex' : 'none'; }
+
+        function copy(t) {
+            navigator.clipboard.writeText(t);
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 2000);
+        }
+    </script>
+</body>
+</html>
