@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>X-TEAM | @URIELGOD</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Orbitron:wght@900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&family=Orbitron:wght@400;900&family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -12,196 +12,280 @@
             --spotify: #1DB954;
             --accent: #bc00ff;
             --bg-dark: #000000;
-            --card-bg: rgba(8, 8, 8, 0.5);
+            --card-bg: rgba(15, 15, 15, 0.9);
+            --neon-green: #00ff88;
+            --verify-blue: #0095f6;
         }
 
-        /* PROTECCIÓN ANTI-COPIA */
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Inter', sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; cursor: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+        body { background-color: var(--bg-dark); color: white; height: 100vh; display: flex; align-items: center; justify-content: center; overflow: hidden; position: fixed; width: 100%; transition: 0.4s; }
+        
+        #particles-js { position: fixed; inset: 0; z-index: -1; background: #000; }
+
+        .theme-picker {
+            position: absolute; left: -50px; top: 50%; transform: translateY(-50%);
+            display: flex; flex-direction: column; gap: 12px; z-index: 100;
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            pointer-events: none;
         }
-
-        body { 
-            background-color: var(--bg-dark); 
-            color: white; 
-            height: 100vh; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            overflow: hidden; 
+        .theme-picker.active {
+            left: 10px;
+            opacity: 1;
+            pointer-events: all;
         }
+        .color-dot { width: 18px; height: 18px; border-radius: 50%; cursor: pointer; border: 2px solid rgba(255,255,255,0.2); transition: 0.3s; }
+        .color-dot:hover { transform: scale(1.3); border-color: white; }
 
-        #particles-js { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: #000; }
+        .dynamic-island-container { position: fixed; top: 15px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; justify-content: center; }
+        .dynamic-island { width: 120px; height: 35px; background: #000; border-radius: 20px; display: flex; align-items: center; justify-content: space-between; padding: 0 15px; transition: all 0.6s cubic-bezier(0.18, 0.89, 0.32, 1.28); border: 1px solid rgba(255, 255, 255, 0.1); overflow: hidden; }
+        .dynamic-island.active { width: 320px; height: 50px; border-color: var(--primary); box-shadow: 0 10px 30px rgba(0, 242, 255, 0.2); }
+        .island-content { display: flex; align-items: center; width: 100%; justify-content: space-between; opacity: 0; transition: opacity 0.3s ease; white-space: nowrap; }
+        .dynamic-island.active .island-content { opacity: 1; }
+        .island-icon { color: var(--primary); font-size: 0.9rem; animation: rotate 3s linear infinite; }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .island-text { font-size: 0.7rem; font-family: 'Orbitron'; letter-spacing: 1px; font-weight: bold; }
 
-        .container {
-            width: 88%; max-width: 380px; background: var(--card-bg); backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 30px; padding: 35px 20px;
-            text-align: center; box-shadow: 0 0 50px rgba(0, 242, 255, 0.05); z-index: 10;
+        #cursor { width: 8px; height: 8px; background: #fff; border-radius: 50%; position: fixed; pointer-events: none; z-index: 9999; transition: transform 0.1s ease; box-shadow: 0 0 10px #fff; }
+        #cursor-follower { width: 25px; height: 25px; border: 1px solid var(--primary); border-radius: 50%; position: fixed; pointer-events: none; z-index: 9998; transition: transform 0.15s ease; }
+        @media (max-width: 1024px) { #cursor, #cursor-follower { display: none; } * { cursor: auto; } }
+
+        #trading-section { display: none; position: fixed; inset: 0; background: radial-gradient(circle at center, #0a1a12 0%, #000 100%); z-index: 5000; flex-direction: column; align-items: center; justify-content: center; padding: 20px; }
+        .grid-bg { position: absolute; inset: 0; background-image: linear-gradient(rgba(0, 255, 136, 0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 255, 136, 0.05) 1px, transparent 1px); background-size: 30px 30px; z-index: -1; }
+        .trading-wrapper { width: 95%; max-width: 450px; background: rgba(5, 5, 5, 0.9); border: 1px solid var(--neon-green); border-radius: 20px; padding: 25px; box-shadow: 0 0 15px rgba(0, 255, 136, 0.2); backdrop-filter: blur(15px); text-align: center; }
+        .chart-box { height: 100px; width: 100%; border: 1px solid rgba(0, 255, 136, 0.1); border-radius: 15px; margin: 15px 0; overflow: hidden; }
+        .chart-svg { width: 100%; height: 100%; stroke: var(--neon-green); stroke-width: 2; fill: rgba(0, 255, 136, 0.05); }
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
+        .stat-card { background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.1); padding: 8px; border-radius: 10px; font-size: 0.7rem; }
+
+        .container { 
+            width: 90%; max-width: 400px; background: var(--card-bg); backdrop-filter: blur(20px); 
+            border: 1px solid rgba(0, 242, 255, 0.2); border-radius: 24px; padding: 30px 25px; 
+            text-align: center; z-index: 10; animation: slideIn 1s ease-out, auraPulse 8s infinite alternate; 
+            position: relative;
         }
+        @keyframes auraPulse { 0% { box-shadow: 0 0 30px rgba(0, 242, 255, 0.1); } 100% { box-shadow: 0 0 50px rgba(188, 0, 255, 0.2); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* AVATAR */
-        .avatar-box { position: relative; width: 110px; height: 110px; margin: 0 auto 15px; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; z-index: 2; position: relative; animation: float 3s ease-in-out infinite; border: 2px solid var(--primary); }
-        .avatar-glow { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); border-radius: 50%; filter: blur(25px); opacity: 0.4; animation: pulse 2s infinite; }
+        /* CONTENEDOR VISUALIZER */
+        .monkey-wrapper { position: relative; width: 100px; height: 100px; margin: 0 auto 5px; display: flex; align-items: center; justify-content: center; }
+        #visualizer-canvas { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 120px; height: 120px; pointer-events: none; z-index: 1; }
+        .monkey-3d-container { perspective: 500px; width: 60px; height: 60px; cursor: pointer; z-index: 2; position: relative; }
+        
+        .monkey { position: relative; width: 100%; height: 100%; transform-style: preserve-3d; animation: floatM 4s infinite ease-in-out; }
+        .m-head { position: absolute; width: 30px; height: 25px; background: #111; border: 1px solid var(--primary); border-radius: 50%; left: 15px; top: 15px; box-shadow: 0 0 10px var(--primary); }
+        @keyframes floatM { 0%, 100% { transform: translateY(0) rotateY(-10deg); } 50% { transform: translateY(-5px) rotateY(10deg); } }
 
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-        @keyframes pulse { 0% { transform: scale(0.9); opacity: 0.3; } 50% { transform: scale(1.1); opacity: 0.5; } 100% { transform: scale(0.9); opacity: 0.3; } }
+        .profile-pic { width: 100px; height: 100px; margin: 0 auto 15px; border-radius: 50%; border: 3px solid var(--primary); padding: 3px; background: #000; position: relative; }
+        .profile-pic img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; }
+        .rank-badge { position: absolute; bottom: -5px; left: 50%; transform: translateX(-50%); background: var(--primary); color: #000; font-size: 0.55rem; font-weight: 900; padding: 2px 12px; border-radius: 10px; font-family: 'Orbitron'; box-shadow: 0 0 15px var(--primary); z-index: 5; }
+        .scanner-line { position: absolute; top: 0; left: 0; width: 100%; height: 2px; background: var(--primary); animation: scan 3s infinite ease-in-out; opacity: 0.5; }
+        @keyframes scan { 0%, 100% { top: 10%; } 50% { top: 90%; } }
 
-        /* TÍTULO Y BADGE */
-        .title-wrapper { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
-        .title { font-family: 'Orbitron'; font-size: 2.1rem; letter-spacing: -2px; }
-        .badge-verified { color: var(--primary); font-size: 1.2rem; filter: drop-shadow(0 0 5px var(--primary)); }
+        .header-box { display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 5px; }
+        .title { font-family: 'Orbitron'; font-size: 2.2rem; background: linear-gradient(90deg, #fff, var(--primary), #fff); background-size: 200% auto; -webkit-background-clip: text; -webkit-text-fill-color: transparent; animation: chromeShine 3s linear infinite; }
+        .verify-badge { color: var(--verify-blue); font-size: 1.4rem; filter: drop-shadow(0 0 5px rgba(0, 149, 246, 0.5)); }
+        @keyframes chromeShine { to { background-position: 200% center; } }
 
-        .tag { color: var(--primary); font-weight: 700; font-size: 0.65rem; letter-spacing: 3px; display: block; margin-bottom: 20px; text-transform: uppercase; }
+        .player-container { background: rgba(255, 255, 255, 0.03); border-radius: 15px; padding: 15px; margin-bottom: 20px; text-align: left; border: 1px solid rgba(255,255,255,0.05); }
+        .progress-bar { width: 0%; height: 4px; background: var(--primary); box-shadow: 0 0 8px var(--primary); transition: width 0.1s linear; margin-top: 10px; border-radius: 10px; }
 
-        /* PLAYER */
-        .player-container {
-            background: rgba(255, 255, 255, 0.05); border-radius: 20px; padding: 12px; margin-bottom: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-        .info-track { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
-        .info-track i { color: var(--spotify); font-size: 1.6rem; cursor: pointer; }
-        .track-text { text-align: left; flex: 1; }
-        .track-text b { font-size: 0.8rem; }
-        .progress-area { width: 100%; height: 4px; background: rgba(255, 255, 255, 0.1); border-radius: 10px; }
-        .progress-bar { width: 0%; height: 100%; background: var(--spotify); border-radius: 10px; }
+        .links { display: flex; flex-direction: column; gap: 10px; }
+        .btn { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 12px; border-radius: 12px; color: #eee; text-decoration: none; font-size: 0.85rem; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: 500; }
+        .btn:hover { background: rgba(255,255,255,0.08); transform: translateY(-2px); border-color: var(--primary); }
+        .btn-key { border-color: var(--accent); color: var(--accent); font-weight: 800; }
 
-        /* LINKS */
-        .links { display: flex; flex-direction: column; gap: 8px; }
-        .btn {
-            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06);
-            padding: 14px; border-radius: 14px; color: #fff; text-decoration: none; font-weight: 600; font-size: 0.85rem;
-            transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px;
-        }
-        .btn:hover { background: rgba(255,255,255,0.08); border-color: var(--primary); transform: translateY(-2px); }
-        .btn-key { border-color: var(--accent); color: var(--accent); }
-
-        /* MODAL DEL AVISO LARGO */
-        .modal { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.95); display: none; align-items: center; 
-            justify-content: center; z-index: 1000; backdrop-filter: blur(10px); 
-        }
-        .modal-card { 
-            background: #0a0a0a; border: 1px solid var(--primary); 
-            padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; 
-            text-align: center;
-        }
-        .modal-card h3 { font-family: 'Orbitron'; color: var(--primary); margin-bottom: 15px; }
-        .modal-card p { font-size: 0.85rem; line-height: 1.7; color: #ccc; text-align: left; }
-        .close-btn { 
-            width: 100%; padding: 12px; background: var(--primary); 
-            border: none; border-radius: 10px; font-weight: 900; 
-            margin-top: 20px; cursor: pointer; color: black;
-        }
-
-        /* VIEWERS */
-        .views-count { margin-top: 20px; font-size: 0.65rem; color: #555; letter-spacing: 1px; font-weight: 700; }
-        .views-count i { color: var(--primary); margin-right: 5px; }
-
-        #toast { position: fixed; bottom: 30px; background: white; color: black; padding: 10px 25px; border-radius: 50px; font-weight: bold; display: none; z-index: 2000; border: 2px solid var(--primary); }
+        .viewers-box { margin-top: 20px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #555; font-size: 0.75rem; font-weight: bold; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        #login-popup { position: fixed; z-index: 6000; background: #000; border: 1px solid var(--primary); padding: 25px; border-radius: 20px; display: none; text-align: center; width: 85%; max-width: 300px; box-shadow: 0 0 25px rgba(0, 242, 255, 0.3); }
+        #login-popup input { background: #111; border: 1px solid var(--primary); color: #fff; padding: 10px; border-radius: 10px; margin-bottom: 15px; outline: none; text-align: center; width: 100%; }
+        .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.9); display: none; align-items: center; justify-content: center; z-index: 7000; backdrop-filter: blur(10px); }
+        .modal-card { background: #0a0a0a; border: 1px solid var(--primary); padding: 30px; border-radius: 20px; width: 85%; max-width: 350px; text-align: center; }
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: #fff; color: #000; padding: 12px 25px; border-radius: 50px; font-weight: bold; display: none; z-index: 9999; }
     </style>
 </head>
 <body oncontextmenu="return false;" onclick="initAudio()">
 
+    <div class="dynamic-island-container">
+        <div class="dynamic-island" id="island">
+            <div class="island-content">
+                <i class="fas fa-compact-disc island-icon"></i>
+                <span class="island-text">Reproduciendo: El Tartas</span>
+                <span class="island-text" id="clock" style="color: var(--primary);">00:00</span>
+            </div>
+        </div>
+    </div>
+
     <div id="particles-js"></div>
-    <div id="toast">¡COPIADO CON ÉXITO!</div>
+    <div id="cursor"></div>
+    <div id="cursor-follower"></div>
+    <div id="toast">COPIADO</div>
 
     <div class="modal" id="keyM">
         <div class="modal-card">
-            <h3>ACCESS SYSTEM</h3>
-            <p>
-                1. Ejecuta el script en el juego.<br>
-                2. Haz click en el botón <b>"Get Key"</b>.<br>
-                3. Pega el enlace en tu navegador <b>Google</b>.<br>
-                4. Únete al grupo oficial de <b>Roblox</b>.<br>
-                5. Escribe el comando <b>/key</b> en el chat.<br>
-                6. ¡Listo! Ya tienes acceso total.
+            <h3 style="font-family:'Orbitron'; color:var(--primary); margin-bottom:15px;">GET KEY</h3>
+            <p style="text-align:left; font-size:0.9rem; color:#ccc; margin-bottom:20px; line-height:1.6;">
+                1. Únete al grupo de <b>Roblox</b>.<br>
+                2. Entra al chat de la comunidad.<br>
+                3. Comenta <b>"key"</b> en el chat.<br>
+                4. ¡Te la darán al instante!
             </p>
-            <button class="close-btn" onclick="toggleM(false)">ENTENDIDO</button>
+            <button style="width:100%; padding:12px; border-radius:10px; border:none; background:var(--primary); font-weight:800;" onclick="toggleM(false)">ENTENDIDO</button>
         </div>
     </div>
 
-    <div class="container">
-        <div class="avatar-box">
-            <div class="avatar-glow"></div>
-            <img src="https://i.ibb.co/Z6dFbdH1/avatar-sin-fondo.png" alt="Avatar" class="avatar-img">
+    <div id="login-popup">
+        <p style="color:var(--primary); font-family:'Orbitron'; margin-bottom:10px; font-size:0.8rem;">SYSTEM ACCESS</p>
+        <input type="password" id="passInput" placeholder="Clave...">
+        <button onclick="checkPass()" style="background:var(--primary); border:none; padding:10px; border-radius:8px; font-weight:bold; width:100%;">ACCEDER</button>
+    </div>
+
+    <div id="trading-section">
+        <div class="grid-bg"></div>
+        <div class="trading-wrapper">
+            <h1 style="font-family:'Orbitron'; color:var(--neon-green); font-size:1.5rem; margin-bottom:5px;">TRADING TERMINAL</h1>
+            <div class="stats-grid">
+                <div class="stat-card"><p>BTC/USDT</p><p>$68,432</p></div>
+                <div class="stat-card"><p>ETH/USDT</p><p>$3,521</p></div>
+                <div class="stat-card"><p>VOL (24H)</p><p>1.2M</p></div>
+            </div>
+            <div class="chart-box">
+                <svg class="chart-svg" viewBox="0 0 500 120"><path id="dynamic-path" d="M0,80 Q50,40 100,80 T200,80 T300,80 T400,80 T500,80 V120 H0 Z" /></svg>
+            </div>
+            <button onclick="location.reload()" class="btn" style="border-color:var(--neon-green); color:var(--neon-green); width:100%;">CERRAR SESIÓN</button>
+        </div>
+    </div>
+
+    <div class="container" id="main-ui">
+        <div class="theme-picker" id="picker">
+            <div class="color-dot" style="background:#00f2ff;" onclick="setTheme('#00f2ff')"></div>
+            <div class="color-dot" style="background:#00ff88;" onclick="setTheme('#00ff88')"></div>
+            <div class="color-dot" style="background:#ff0055;" onclick="setTheme('#ff0055')"></div>
+            <div class="color-dot" style="background:#bc00ff;" onclick="setTheme('#bc00ff')"></div>
+            <div class="color-dot" style="background:#ff8800;" onclick="setTheme('#ff8800')"></div>
         </div>
 
-        <div class="title-wrapper">
-            <h1 class="title">X-TEAM</h1>
-            <i class="fas fa-check-circle badge-verified"></i>
+        <div class="monkey-wrapper">
+            <canvas id="visualizer-canvas"></canvas>
+            <div class="monkey-3d-container" id="monkey-btn" onclick="document.getElementById('login-popup').style.display='block'">
+                <div class="monkey">
+                    <div class="m-head">
+                        <div class="m-eye" style="left:8px; position:absolute; width:4px; height:4px; background:var(--primary); border-radius:50%; top:8px;"></div>
+                        <div class="m-eye" style="right:8px; position:absolute; width:4px; height:4px; background:var(--primary); border-radius:50%; top:8px;"></div>
+                    </div>
+                </div>
+            </div>
         </div>
-        <span class="tag">@URIELGOD</span>
+
+        <div class="profile-pic">
+            <div class="scanner-line"></div>
+            <div class="rank-badge">OWNER</div>
+            <img src="https://i.ibb.co/Z6dFbdH1/avatar-sin-fondo.png" alt="Avatar">
+        </div>
+
+        <div class="header-box">
+            <h1 class="title">X-TEAM</h1>
+            <i class="fas fa-check-circle verify-badge"></i>
+        </div>
+        
+        <span style="color:#888; font-size:0.7rem; letter-spacing:4px; display:block; margin-bottom:20px;">@URIELGOD</span>
 
         <div class="player-container">
-            <div class="info-track">
-                <i class="fas fa-play-circle" id="play-icon" onclick="togglePlay()"></i>
-                <div class="track-text"><b>El Tartas</b></div>
-                <i class="fab fa-spotify" style="color:var(--spotify)"></i>
+            <div style="display:flex; align-items:center; gap:12px;">
+                <i class="fas fa-play" id="play-icon" style="font-size:1.5rem; color:var(--primary); cursor:pointer;" onclick="togglePlay()"></i>
+                <div style="flex:1">
+                    <div style="font-size:0.8rem; font-weight:700;">El Tartas</div>
+                    <div style="font-size:0.6rem; color:#666;">X-TEAM Sound</div>
+                </div>
+                <i class="fab fa-spotify" style="color:var(--spotify); font-size:1.2rem;"></i>
             </div>
-            <div class="progress-area"><div class="progress-bar" id="progress-bar"></div></div>
+            <div style="width:100%; height:4px; background:rgba(255,255,255,0.1); border-radius:10px; margin-top:10px; overflow:hidden;">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
         </div>
 
         <div class="links">
-            <a href="javascript:void(0)" class="btn btn-key" onclick="toggleM(true)">
-                <i class="fas fa-key"></i> OBTENER KEY
-            </a>
-            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/GrowGarden/main/Script\'))()')">
-                <i class="fas fa-leaf"></i> GROW GARDEN
-            </a>
-            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/BrainRot/main/Script\'))()')">
-                <i class="fas fa-radiation"></i> BRAINROT HUB
-            </a>
-            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/MurderMystery/main/Script\'))()')">
-                <i class="fas fa-skull"></i> MURDER MYSTERY
-            </a>
-            <a href="https://www.tiktok.com/@teamnegro_01029" target="_blank" class="btn">
-                <i class="fab fa-tiktok"></i> TIKTOK OFICIAL
-            </a>
+            <a href="javascript:void(0)" class="btn btn-key" onclick="toggleM(true)"><i class="fas fa-key"></i> GET KEY</a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/BrainRot/main/Script\'))()')"><i class="fas fa-biohazard"></i> ROBA UN BRAINROT</a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/GrowGarden/main/Script\'))()')"><i class="fas fa-seedling"></i> GROW GARDEN</a>
+            <a href="javascript:void(0)" class="btn" onclick="copy('loadstring(game:HttpGet(\'https://raw.githubusercontent.com/AnonKpt/Murder/main/Script\'))()')"><i class="fas fa-skull"></i> MURDER MYSTERY 2</a>
+            <a href="https://www.tiktok.com/@teamnegro_01029" target="_blank" class="btn"><i class="fab fa-tiktok"></i> OFFICIAL TIKTOK</a>
         </div>
 
-        <div class="views-count">
-            <i class="fas fa-eye"></i> 14,582 VIEWS
+        <div class="viewers-box">
+            <i class="fas fa-eye" style="color:var(--primary);"></i> 
+            <span id="viewer-count">0</span> <span>VIEWS</span>
         </div>
     </div>
 
-    <audio id="main-audio"></audio>
+    <audio id="main-audio" crossorigin="anonymous"></audio>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        particlesJS('particles-js', {
-            "particles": {
-                "number": { "value": 80 },
-                "color": { "value": "#ffffff" },
-                "opacity": { "value": 0.2 },
-                "size": { "value": 1.5 },
-                "move": { "enable": true, "speed": 0.8, "direction": "top-right" }
-            }
+        particlesJS('particles-js', { "particles": { "number": { "value": 50 }, "color": { "value": "#ffffff" }, "opacity": {"value": 0.3}, "move": { "speed": 1 } } });
+
+        const cursor = document.getElementById('cursor');
+        const follower = document.getElementById('cursor-follower');
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px'; cursor.style.top = e.clientY + 'px';
+            setTimeout(() => { follower.style.left = e.clientX - 10 + 'px'; follower.style.top = e.clientY - 10 + 'px'; }, 50);
         });
+
+        const monkeyBtn = document.getElementById('monkey-btn');
+        const picker = document.getElementById('picker');
+        
+        monkeyBtn.addEventListener('dblclick', function(e) {
+            e.stopPropagation();
+            picker.classList.toggle('active');
+            speak("Selector de temas activado");
+        });
+
+        function setTheme(color) {
+            document.documentElement.style.setProperty('--primary', color);
+            follower.style.borderColor = color;
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.getHours().toString().padStart(2, '0') + ":" + now.getMinutes().toString().padStart(2, '0');
+        }, 1000);
+
+        function animateValue(obj, start, end, duration) {
+            let startTimestamp = null;
+            const step = (timestamp) => {
+                if (!startTimestamp) startTimestamp = timestamp;
+                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
+                if (progress < 1) { window.requestAnimationFrame(step); }
+            };
+            window.requestAnimationFrame(step);
+        }
+        animateValue(document.getElementById("viewer-count"), 0, 14582, 2000);
+
+        function checkPass() {
+            if(document.getElementById('passInput').value === 'Admin') {
+                document.getElementById('main-ui').style.display = 'none';
+                document.getElementById('login-popup').style.display = 'none';
+                document.getElementById('trading-section').style.display = 'flex';
+                speak("Bienvenido al sistema Uriel Dios");
+                animateChart();
+            } else { alert('ACCESO DENEGADO'); }
+        }
+
+        function toggleM(s) { document.getElementById('keyM').style.display = s ? 'flex' : 'none'; }
 
         const audio = document.getElementById('main-audio');
         const playBtn = document.getElementById('play-icon');
         const progressBar = document.getElementById('progress-bar');
+        const island = document.getElementById('island');
         
-        function initAudio() { if(!audio.src) audio.src = "comando exclusivo el tartas(MP3_160K).mp3"; }
-        function togglePlay() {
-            if(audio.paused) { audio.play(); playBtn.className = "fas fa-pause-circle"; } 
-            else { audio.pause(); playBtn.className = "fas fa-play-circle"; }
-        }
-        audio.ontimeupdate = () => { progressBar.style.width = `${(audio.currentTime / audio.duration) * 100}%`; };
+        // --- LÓGICA DEL VISUALIZADOR ---
+        let audioCtx, analyser, source, dataArray;
+        const canvas = document.getElementById('visualizer-canvas');
+        const ctx = canvas.getContext('2d');
 
-        // FUNCIONES DE INTERFAZ
-        function toggleM(s) { document.getElementById('keyM').style.display = s ? 'flex' : 'none'; }
-
-        function copy(t) {
-            navigator.clipboard.writeText(t);
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 2000);
-        }
-    </script>
-</body>
-</html>
+        function setupVisualizer() {
+            if (audioCtx) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(audio);
+            source.connect(analyser);
